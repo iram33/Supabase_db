@@ -23,8 +23,8 @@ jobs:
       - name: Backup Supabase database
         run: |
           pg_dump \
-            -h aws-0-ap-south-1.pooler.supabase.com \
-            -p 6543 \
+            -h db.glvrczutnpikqgetbolr.supabase.co \
+            -p 5432 \
             -U postgres \
             -d postgres \
             --format=custom \
