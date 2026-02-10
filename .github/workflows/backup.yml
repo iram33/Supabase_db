@@ -1,0 +1,38 @@
+name: Supabase Backup
+
+# This allows manual triggering of the workflow from the GitHub web UI
+on:
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository (optional, if you want to store backup here)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set environment variables
+      - name: Set environment variables
+        run: |
+          export PGPASSWORD="${{ secrets.DB_PASSWORD }}"
+          export PGSSLMODE=require
+
+      # Step 3: Run pg_dump
+      - name: Backup Supabase database
+        run: |
+          pg_dump \
+            -h db.glvrczutnpikqgetbolr.supabase.co \
+            -U postgres \
+            -d postgres \
+            --format=custom \
+            -f supabase_backup.dump
+
+      # Step 4: (Optional) Upload the backup as artifact for download
+      - name: Upload backup
+        uses: actions/upload-artifact@v3
+        with:
+          name: supabase-backup
+          path: supabase_backup.dump
+
