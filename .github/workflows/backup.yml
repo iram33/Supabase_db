@@ -11,7 +11,7 @@ jobs:
     steps:
       # Step 1: Checkout repository (optional, if you want to store backup here)
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set environment variables
       - name: Set environment variables
@@ -31,7 +31,7 @@ jobs:
 
       # Step 4: (Optional) Upload the backup as artifact for download
       - name: Upload backup
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: supabase-backup
           path: supabase_backup.dump
