@@ -16,15 +16,9 @@ jobs:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
           PGSSLMODE: require
         run: |
-          # Get IPv4 address
           HOST_IP=$(getent ahostsv4 db.glvrczutnpikqgetbolr.supabase.co | awk '{print $1; exit}')
-
-          pg_dump \
-            -h $HOST_IP \
-            -U postgres \
-            -d postgres \
-            --format=custom \
-            -f supabase_backup.dump
+          echo "Connecting to IP: $HOST_IP"
+          pg_dump -h "$HOST_IP" -U postgres -d postgres --format=custom -f supabase_backup.dump
 
       - name: Upload backup
         uses: actions/upload-artifact@v4
