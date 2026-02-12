@@ -11,23 +11,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install DNS utilities
-        run: sudo apt-get update && sudo apt-get install -y dnsutils
-
       - name: Backup Supabase database
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-          PGSSLMODE: require
         run: |
-          HOST_IP=$(dig +short db.glvrczutnpikqgetbolr.supabase.co A | head -n1)
-          echo "Resolved IPv4: $HOST_IP"
-
-          if [ -z "$HOST_IP" ]; then
-            echo "Failed to resolve IPv4 address"
-            exit 1
-          fi
-
-          pg_dump -h "$HOST_IP" -p 5432 -U postgres -d postgres --format=custom -f supabase_backup.dump
+          pg_dump \
+            "postgresql://postgres:${PGPASSWORD}@db.glvrczutnpikqgetbolr.supabase.co:5432/postgres?sslmode=require" \
+            --format=custom \
+            -f supabase_backup.dump
 
       - name: Upload backup
         uses: actions/upload-artifact@v4
