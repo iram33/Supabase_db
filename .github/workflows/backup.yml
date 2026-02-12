@@ -11,6 +11,7 @@ jobs:
       - name: Backup Supabase database
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+          PGSSLMODE: require
         run: |
           pg_dump \
             -h aws-1-ap-south-1.pooler.supabase.com \
@@ -20,7 +21,6 @@ jobs:
             --format=custom \
             --no-owner \
             --no-privileges \
-            --sslmode=require \
             -f supabase_backup.dump
 
       - name: Upload backup
