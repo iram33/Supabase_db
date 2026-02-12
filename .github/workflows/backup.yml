@@ -8,13 +8,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install DNS utilities
+        run: sudo apt-get update && sudo apt-get install -y dnsutils
+
       - name: Backup Supabase database
         env:
           PGPASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
+          HOST_IP=$(dig +short db.glvrczutnpikqgetbolr.supabase.co A | head -n1)
+
+          if [ -z "$HOST_IP" ]; then
+            echo "Failed to resolve IPv4 address"
+            exit 1
+          fi
+
+          echo "Connecting to IPv4: $HOST_IP"
+
           pg_dump \
-            "postgresql://postgres:${PGPASSWORD}@db.glvrczutnpikqgetbolr.supabase.co:5432/postgres?sslmode=require" \
+            -h "$HOST_IP" \
+            -p 5432 \
+            -U postgres \
+            -d postgres \
             --format=custom \
+            --no-owner \
+            --no-privileges \
+            --sslmode=require \
             -f supabase_backup.dump
 
       - name: Upload backup
